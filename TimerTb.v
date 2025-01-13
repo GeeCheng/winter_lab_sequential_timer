@@ -30,7 +30,10 @@ module TimerTb;
   integer i     = 0;
   integer stop = 0;
   integer N = 20;
-
+  integer file_time;
+  integer file_end;
+  integer status_time;
+  integer status_end;
   reg [15:0] expected_time = 16'd0;
 
   initial begin
@@ -38,11 +41,21 @@ module TimerTb;
     $dumpfile("TimerTb.vcd");
     $dumpvars(0, TimerTb);
 
+    file_time = $fopen("answer_time.txt", "r");
+    file_end = $fopen("answer_end.txt", "r");
+
+    if (file_time == 0 || file_end == 0) begin
+      $display("Error: could not open file");
+      $finish;
+    end
+
     start_i = 0;
 
     for (i = 0; i < 20; i = i + 1) begin
       #10;
-      if (curr_time_q != 0) begin
+      status_time = $fscanf(file_time, "%d\n", expected_time);
+      status_end = $fscanf(file_end, "%d\n", stop);
+      if (curr_time_q != expected_time) begin
         $display("Error: curr_time_q = %d, expected 0", curr_time_q);
         error = 1;
       end
@@ -63,7 +76,8 @@ module TimerTb;
 
     for (i = 0; i < 50; i = i + 1) begin
       #10;
-
+      status_time = $fscanf(file_time, "%d\n", expected_time);
+      status_end = $fscanf(file_end, "%d\n", stop);
       if (curr_end_q != stop) begin
         $display("Error: curr_end_q = %d, expected %d", curr_end_q, stop);
         error = error + 1;
@@ -71,16 +85,6 @@ module TimerTb;
       if (curr_time_q != expected_time) begin
         $display("Error: curr_time_q = %d, expected %d", curr_time_q, expected_time);
         error = error + 1;
-      end
-      if (stop == 0) begin
-        if (expected_time < N - 1) begin
-          expected_time = expected_time + 1;
-        end else begin
-          expected_time = 16'd0;
-          stop = 1;
-        end
-      end else begin
-        stop = 0;
       end
     end
 
