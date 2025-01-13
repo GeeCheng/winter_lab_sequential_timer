@@ -29,7 +29,7 @@ module TimerTb;
   integer error = 0;
   integer i     = 0;
   integer stop = 0;
-  integer N = 20;
+  
   integer file_time;
   integer file_end;
   integer status_time;
