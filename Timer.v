@@ -6,7 +6,7 @@ module Timer (
   input  wire        rst_n,
   input  wire [15:0] n_i,
   input  wire        start_i,
-  output reg [15:0]  curr_time_q,
+  output reg  [15:0] curr_time_q,
   output reg         curr_end_q
 );
 
